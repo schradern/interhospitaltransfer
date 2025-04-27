@@ -13,6 +13,9 @@
   html, body {
     height: 100%;
     min-height: 100vh;
+    background-color: var(--bg); /* or white, or your normal page color */
+    overscroll-behavior: contain; /* Optional: prevents bouncy scrolling outside */
+    -webkit-overflow-scrolling: touch; 
   }
 
   
@@ -27,8 +30,11 @@
   }
 
   body {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
     margin: 0;
-    padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--fg);
@@ -45,7 +51,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 1rem max(1rem, env(safe-area-inset-right)) 1rem max(1rem, env(safe-area-inset-left));
     background: white;
     border-bottom: 1px solid #ccc;
     font-weight: 600;
@@ -479,14 +485,6 @@
   .navigation .dot.active {
     background-color: var(--accent);
   }
-  /* Allgemeines Layout */
-.swipe-container {
-  position: relative;
-  overflow: hidden;
-  max-width: var(--max-width);
-  margin: 0.5rem auto;
-  border-radius: var(--radius);
-}
 
 /* Entry selbst */
 .entry {
@@ -523,20 +521,37 @@
   }
 }
 
-/* Mobile: Roter Swipe-Bereich */
+.swipe-container {
+  position: relative;
+  overflow: visible; /* not hidden */
+  max-width: var(--max-width);
+  margin: 0.5rem auto;
+  border-radius: var(--radius);
+  background: transparent;
+}
+
+.entry {
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
 .delete-btn {
   position: absolute;
-  right: 0;
   top: 0;
   bottom: 0;
-  width: 100px;
-  background-color: #ff3b30;
+  right: 0;
+  height: 100%;
+  width: 80px; /* Or 25% if you want proportional swipe */
+  background: #ff3b30;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 0.8rem;
+  border-top-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  overflow: hidden;
   z-index: 0;
 }
 
@@ -644,6 +659,25 @@
   .footer a {
     text-decoration: none;
     color: #555;
+  }
+
+  #legalPopover {
+    display: none;
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    max-width: 90%;
+    max-height: 80vh; /* <--- WICHTIG: Popover maximal 80% der Höhe */
+    overflow-y: auto; /* <--- WICHTIG: Scrollbar im Popover, wenn zu voll */
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
+    color: #333;
+    text-align: left;
+    z-index: 1001;
   }
   
   @media (min-width: 768px) {
