@@ -114,3 +114,4 @@ Hinweis: Der vollständige Lizenztext ist innerhalb der Datei `libs/jspdf.umd.mi
 - Alle Daten werden ausschließlich lokal auf Ihrem Gerät bzw. im Browser gespeichert.
 - Beim Löschen des Browser-Cache, bei Zurücksetzen des Gerätes oder der IndexedDB können lokal gespeicherte Daten unwiederbringlich verloren gehen.
 - Der Anwender ist eigenverantwortlich für die ordnungsgemäße Handhabung und Speicherung personenbezogener Daten. Insbesondere ist der Anwender verpflichtet, alle anwendbaren Datenschutzgesetze (z.B. DSGVO) einzuhalten.
+- Diese Webanwendung dient ausschließlich der unterstützenden Erfassung von Verlegungsanfragen. Sie ersetzt keine medizinische Dokumentation im Sinne gesetzlicher Vorschriften. Für die korrekte Erfassung, Aufbewahrung und Sicherung von Patientendaten bleibt der Anwender verantwortlich.
