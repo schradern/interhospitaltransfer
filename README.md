@@ -43,7 +43,7 @@ Die App funktioniert offline, speichert lokal (IndexedDB) und bietet eine strukt
 1. Projekt klonen:
 
 ```bash
-git clone https://github.com/DEINUSERNAME/interhospitaltransfer.git
+git clone https://github.com/schradern/interhospitaltransfer.git
 cd interhospitaltransfer
 ```
 
