@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Interhospitaltransfer</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="manifest" href="manifest.json" />
@@ -26,9 +26,26 @@
 
   <footer class="footer">
     <div class="footer-note">
-      Version 1.0 by <a href="https://www.medizin.dev">Dr. med. Nikolas B. Schrader</a>
+      <a href="#" onclick="document.getElementById('legalPopover').style.display='block';" style="color: #777;">Nutzungshinweis</a> | Version 1.0 by <a href="https://www.medizin.dev" target="_blank" style="color: #777;">Dr. med. Nikolas B. Schrader</a>
     </div>
   </footer>
+  <div id="legalPopover">
+      <p><strong>Nutzungshinweis: Interhospitaltransfer App</strong></p>
+      <p>Durch Nutzung der Anwendung akzeptieren Sie die folgenden Bedingungen:</p>
+      <ul style="margin-left: 1rem;">
+        <li>Beim Löschen des Browser-Cache, Zurücksetzen des Gerätes oder der IndexedDB können lokal gespeicherte Daten unwiederbringlich verloren gehen.</li>
+        <li>Der Anwender ist eigenverantwortlich für die Handhabung und Speicherung personenbezogener Daten (insbesondere Einhaltung der DSGVO).</li>
+        <li>Diese Webanwendung dient ausschließlich der unterstützenden Erfassung von Verlegungsanfragen. Sie ersetzt keine medizinische Dokumentation im Sinne gesetzlicher Vorschriften. Für die korrekte Erfassung, Aufbewahrung und Sicherung von Patientendaten bleibt der Anwender verantwortlich.</li>
+        <li>Die Nutzung erfolgt auf eigene Verantwortung. Es wird keine Gewähr für Vollständigkeit, Verfügbarkeit und Fehlerfreiheit übernommen.</li>
+      </ul>
+      <p>Weitere Informationen und Source-Code: <a href="https://github.com/schradern/interhospitaltransfer" target="_blank" style="color: #007aff;">GitHub Projektseite</a></p>
+      <p style="text-align: center;">
+        <button onclick="document.getElementById('legalPopover').style.display='none'; document.getElementById('legalBackdrop').style.display='none';" 
+                style="margin-top: 1rem; background-color: #007aff; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 0.5rem; font-size: 1rem; cursor: pointer;">
+          Schließen
+        </button>
+      </p>
+  </div>
 </div>
   <script src="libs/jspdf.umd.min.js"></script>
   <script type="module" src="main.js"></script>
