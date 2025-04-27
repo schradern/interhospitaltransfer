@@ -1,0 +1,681 @@
+<form id="transferForm" action="">
+    <input type="hidden" name="id" id="entryId">
+    <section class="active">
+      <h2>Patientendaten</h2>
+
+      <label for="patientenname">Patientenname</label>
+      <input type="text" id="patientenname" name="patientenname">
+      
+      <div class="input-pair">
+          <label for="geburtsdatum">Geburtsdatum <input type="text" id="geburtsdatum" name="geburtsdatum" placeholder="TT.MM.JJJJ" inputmode="numeric" ></label>
+          <label for="gewicht">Gewicht (kg) <input type="text" id="gewicht" name="gewicht" step="0.1"></label>
+        </div>
+    </section>
+  
+    <section>
+      <h2>Transferdetails</h2>
+      <details class="accordion" open>
+        <summary><strong>Quellklinik</strong></summary>
+        <div class="input-pair">
+          <label for="quellklinik_name">Klinikname <input type="text" id="quellklinik_name" name="quellklinik_name"></label>
+          <label for="quellklinik_station">Station <input type="text" id="quellklinik_station" name="quellklinik_station"></label>
+        </div>
+        <div class="input-pair">
+          <label for="quellklinik_tel">Telefonnummer <input type="tel" id="quellklinik_tel" name="quellklinik_tel"></label>
+          <label for="quellklinik_ansprechpartner">Ansprechpartner <input type="text" id="quellklinik_ansprechpartner" name="quellklinik_ansprechpartner"></label>
+        </div>
+        <div class="form-toggle">
+          <span class="toggle-label">Landeplatz vorhanden</span>
+          <label class="switch">
+            <input type="checkbox" class="landeplatzToggle" id="landeplatz_quellklinik" name="landeplatz_quellklinik">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="rtw-wrapper hidden">
+          <label for="rtw_quellklinik">Transfer-RTW erforderlich
+            <select id="rtw_quellklinik" name="rtw_quellklinik">
+              <option value="ja">Ja</option>
+              <option value="nein">Nein</option>
+            </select>
+          </label>
+        </div>
+      </details>
+      
+      <details class="accordion">
+        <summary><strong>Zielklinik</strong></summary>
+        <div class="input-pair">
+          <label for="zielklinik_name">Klinikname <input type="text" id="zielklinik_name" name="zielklinik_name"></label>
+          <label for="zielklinik_station">Station  <input type="text" id="zielklinik_station" name="zielklinik_station"></label>
+        </div>
+        <div class="input-pair">
+          <label for="zielklinik_tel">Telefonnummer <input type="tel" id="zielklinik_tel" name="zielklinik_tel"></label>
+          <label for="zielklinik_ansprechpartner">Ansprechpartner <input type="text" id="zielklinik_ansprechpartner" name="zielklinik_ansprechpartner"></label>
+        </div>        
+        <div class="form-toggle">
+          <span class="toggle-label">Landeplatz vorhanden</span>
+          <label class="switch">
+            <input type="checkbox" class="landeplatzToggle" id="landeplatz_zielklinik" name="landeplatz_zielklinik">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="rtw-wrapper hidden">
+          <label for="rtw_zielklinik">Transfer-RTW erforderlich
+            <select id="rtw_zielklinik" name="rtw_zielklinik">
+              <option value="ja">Ja</option>
+              <option value="nein">Nein</option>
+            </select>
+          </label>
+        </div>
+        <label for="aufnahme_zugesichert">Aufnahme zugesichert
+        <select id="aufnahme_zugesichert" name="aufnahme_zugesichert">
+          <option value="ja">Ja</option>
+          <option value="nein">Nein</option>
+        </select></label>
+      </details>
+    </section>
+
+    <section>
+      <h2>Transferinformationen</h2>
+      <label for="verlegungsgrund">Verlegungsgrund
+        <select id="verlegungsgrund" name="verlegungsgrund">
+          <option>Intervention</option>
+          <option>Operation</option>
+          <option>Intensivbehandlung</option>
+          <option>Rehabilitation</option>
+          <option>Heimatnahe Rückverlegung</option>
+          <option>Sonstiges</option>
+        </select>
+      </label>
+      <label for="dringlichkeit">Dringlichkeit
+        <select id="dringlichkeit" name="dringlichkeit">
+          <option>Innerhalb von 2 Stunden</option>
+          <option>Terminiert</option>
+          <option>Elektiv</option>
+          <option>Verschiebbar</option>
+        </select>
+      </label>
+      <div class="hidden" id="zeitfensterWrapper">
+        <label for="zeitfenster">Wunschzeit / Zeitfenster
+          <input type="text" id="zeitfenster" name="zeitfenster" placeholder="z. B. 24. 04. 08:00 Uhr">
+        </label>
+      </div>
+      <label for="transport_boden">Bodengebundener Transport vertretbar
+        <select id="transport_boden" name="transport_boden">
+          <option>Ja</option>
+          <option>Nein</option>
+          <option>Nur, sofern zeitnah keine Luftrettung verfügbar ist</option>
+        </select>
+      </label>
+    </section>
+  
+    <section>
+      <h2>Medizinischer Hintergrund</h2>
+      <label for="verlegungsdiagnose">Verlegungsdiagnose
+        <textarea id="verlegungsdiagnose" name="verlegungsdiagnose" rows="3" placeholder="z. B. ACS, Aortendissektion, Sepsis …"></textarea>
+      </label>
+      <label for="zusatzdiagnosen">Zusatzdiagnosen
+        <textarea id="zusatzdiagnosen" name="zusatzdiagnosen" rows="3" placeholder="weitere relevante Diagnosen …"></textarea>
+      </label>
+      <div class="input-pair">
+        <label for="klinik_seit">In Klinik seit
+          <input type="text" id="klinik_seit" name="klinik_seit" placeholder="TT.MM.JJJJ" inputmode="numeric"> <!--  pattern="\\d{2}\\.\\d{2}\\.\\d{4}" -->
+        </label>
+        <label for="intensiv_seit">Intensivpflichtig seit
+          <input type="text" id="intensiv_seit" name="intensiv_seit" placeholder="TT.MM.JJJJ" inputmode="numeric" >
+        </label>
+      </div>
+    </section>
+  
+    <section>
+      <h2>Klinischer Zustand</h2>
+      <details class="accordion" open>
+        <summary>Bewusstsein</summary>
+        <div class="input-pair">
+          <label for="bewusstsein">Bewusstseinszustand
+            <select id="bewusstsein" name="bewusstsein">
+              <option value="orientiert">Orientiert</option>
+              <option value="getrübt">Getrübt</option>
+              <option value="bewusstlos">Bewusstlos</option>
+              <option value="analgosediert">Analgosediert</option>
+            </select>
+          </label>
+          <label for="gcs">GCS (Score)
+            <input type="text" id="gcs" name="gcs" min="3" max="15" placeholder="z. B. 15">
+          </label>
+        </div>
+        <label for="bewFreitext">Freitext
+          <input type="text" id="bewFreitext" name="bewFreitext" placeholder="z. B. Sedierung mit Midazolam …">
+        </label>
+      </details>
+      <details class="accordion">
+        <summary>Atmung / Beatmung</summary>
+      
+        <div class="input-pair">
+          <label for="spo2">SpO₂ in %
+            <input type="text" id="spo2" name="spo2" min="0" max="100" placeholder="z. B. 96">
+          </label>
+          <label for="af">AF [1/min]
+            <input type="text" id="af" name="af" placeholder="z. B. 14">
+          </label>
+        </div>
+      
+        <label for="atemweg">Atemweg
+          <select id="atemweg" name="atemweg">
+            <option>Keine Atemwegssicherung</option>
+            <option>Wendeltubus / Güdeltubus</option>
+            <option>Larynxmaske</option>
+            <option>Endotrachealtubus (oral)</option>
+            <option>Endotrachealtubus (nasal)</option>
+            <option>Tracheostomie (konventionell, chirurgisch)</option>
+            <option>Dilatationstracheostomie</option>
+          </select>
+        </label>
+      
+        <div class="toggle-card-wrapper">
+          <div class="toggle-header">
+            <span class="toggle-label">Beatmet</span>
+            <label class="switch">
+              <input type="checkbox" id="beatmungToggle" name="beatmet">
+              <span class="slider"></span>
+            </label>
+          </div>
+      
+          <div class="toggle-card hidden" id="beatmungsDetails">
+            <div class="input-pair">
+              <label for="beatmungsModus">Modus
+                <select id="beatmungsModus" name="beatmungs_modus">
+                  <option value="">Bitte wählen</option>
+                  <option value="druck">druckkontrolliert</option>
+                  <option value="volumen">volumenkontrolliert</option>
+                  <option value="assistiert">assistiert</option>
+                  <option value="niv">NIV</option>
+                </select>
+              </label>
+            </div>
+      
+            <!-- Basiswerte -->
+            <div class="input-pair">
+              <label for="fio2">FiO₂
+                <input type="text" id="fio2" name="fio2" min="0.21" max="1" step="0.01" placeholder="z. B. 0.21">
+              </label>
+              <label for="peep">PEEP [cmH₂O]
+                <input type="text" id="peep" name="peep" min="0" placeholder="z. B. 5">
+              </label>
+            </div>
+      
+            <!-- Modus: druckkontrolliert -->
+            <div class="modul active" id="modDruck">
+              <div class="input-pair">
+                <label for="pinsp">Pinsp
+                  <input type="text" id="pinsp" name="pinsp" placeholder="z. B. 20">
+                </label>
+                <label for="ie">I:E
+                  <input type="text" id="ie" name="ie" placeholder="z. B. 1:2">
+                </label>
+              </div>
+            </div>
+      
+            <!-- Modus: volumenkontrolliert -->
+            <div class="modul active" id="modVolumen">
+              <div class="input-pair">
+                <label for="vt">Tidalvolumen [ml]
+                  <input type="text" id="vt" name="vt" placeholder="z. B. 500">
+                </label>
+                <label for="amv">AMV [l/min]
+                  <input type="text" id="amv" name="amv" step="0.1" placeholder="z. B. 6.5">
+                </label>
+              </div>
+            </div>
+      
+            <!-- Modus: NIV -->
+            <div class="modul active" id="modNIV">
+              <div class="input-pair">
+                <label for="asb">ASB
+                  <input type="text" id="asb" name="asb" placeholder="z. B. 10">
+                </label>
+              </div>
+            </div>
+            <div class="input-pair">
+              <label for="beatmet_seit">Beatmet seit
+                <input type="text" id="beatmet_seit" name="beatmet_seit" placeholder="TT.MM.JJJJ" inputmode="numeric" >
+              </label>
+            </div>
+          </div>
+        </div>
+      
+        <label for="awFreitext">Freitext
+          <input type="text" id="awFreitext" name="awFreitext" placeholder="z. B. HFNC-Therapie, Maskenbeatmung">
+        </label>
+      </details>
+      <details class="accordion">
+        <summary>Kreislauf</summary>
+      
+        <div class="input-triplet">
+          <label for="rr_sys">Systolisch [mmHg]
+            <input type="text" id="rr_sys" name="rr_sys">
+          </label>
+          <label for="rr_dias">Diastolisch [mmHg]
+            <input type="text" id="rr_dias" name="rr_dias">
+          </label>
+          <label for="hr">Herzfrequenz [/min]
+            <input type="text" id="hr" name="hr">
+          </label>
+        </div>
+      
+        <!-- Akute Blutung -->
+        <div class="form-toggle">
+          <span class="toggle-label">Akute Blutung</span>
+          <label class="switch">
+            <input type="checkbox" id="toggleBlutung" name="akute_blutung">
+            <span class="slider"></span>
+          </label>
+        </div>
+      
+        <!-- Katecholamine -->
+        <div class="toggle-card-wrapper">
+          <div class="toggle-header">
+            <span class="toggle-label">Katecholaminpflichtig</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleKatecholamin" name="katego_toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+      
+          <div class="toggle-card hidden katego-wrapper">
+            <label for="noradrenalin">Noradrenalin
+              <input type="text" id="noradrenalin" name="noradrenalin_dosis" placeholder="z. B. 0.2 µg/kg/min">
+            </label>
+            <label for="adrenalin">Adrenalin
+              <input type="text" id="adrenalin" name="adrenalin_dosis" placeholder="z. B. 0.1 µg/kg/min">
+            </label>
+            <label for="dopamin">Dopamin
+              <input type="text" id="dopamin" name="dopamin_dosis" placeholder="z. B. 3 µg/kg/min">
+            </label>
+            <label for="dobutamin">Dobutamin
+              <input type="text" id="dobutamin" name="dobutamin_dosis" placeholder="z. B. 5 µg/kg/min">
+            </label>
+          </div>
+        </div>
+      
+        <!-- Schrittmacher -->
+        <div class="toggle-card-wrapper">
+          <div class="toggle-header">
+            <span class="toggle-label">Temporärer Schrittmacher</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleSchrittmacher" name="schrittmacher_toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+      
+          <div class="toggle-card hidden schrittmacher-wrapper">
+            <label for="schrittmacher_modus">Modus (z. B. DDD, VVI, asynchron)
+              <input type="text" id="schrittmacher_modus" name="schrittmacher_modus" placeholder="Modus">
+            </label>
+          </div>
+        </div>
+      
+        <!-- Sonstige Therapie -->
+        <div class="toggle-card-wrapper">
+          <div class="toggle-header">
+            <span class="toggle-label">Sonstige Therapie</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleSonstige" name="sonstige_toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+      
+          <div class="toggle-card sonstige-wrapper hidden">
+            <label for="sonstige_details">Details
+              <textarea id="sonstige_details" name="sonstige_details" placeholder="z. B. Volumentherapie, ECMO etc."></textarea>
+            </label>
+          </div>
+        </div>
+      </details>
+      <details class="accordion">
+        <summary>Nierenfunktion</summary>
+      
+        <!-- Ausscheidung -->
+        <label for="ausscheidung">Ausscheidung
+          <select id="ausscheidung" name="ausscheidung">
+            <option>Normal</option>
+            <option>Oligurie</option>
+            <option>Anurie</option>
+          </select>
+        </label>
+      
+        <!-- Dialyse -->
+        <div class="toggle-card-wrapper">
+          <div class="toggle-header">
+            <span class="toggle-label">Dialyse</span>
+            <label class="switch">
+              <input type="checkbox" id="toggleDialyse" name="dialyse_toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+      
+          <div class="toggle-card dialyse-wrapper hidden">
+            <label for="dialyse_verfahren">Verfahren 
+              <select id="dialyse_verfahren" name="dialyse_verfahren">
+                <option>kontinuierliche Hämodiafiltration</option>
+                <option>diskontinuierlich</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      
+        <!-- Freitext -->
+        <label for="niere_freitext">Freitext
+          <input type="text" id="niere_freitext" name="niere_freitext" placeholder="z. B. Kreatinin, Harnstoff etc.">
+        </label>
+      </details>
+      
+      <details class="accordion">
+        <summary>Infektiologie</summary>
+      
+        <!-- IRG -->
+        <label for="irg">Infektionsrisikogruppe
+          <select id="irg" name="irg">
+            <option value="1" title="Keine bekannte Infektion, keine MRE">IRG 1 – Kein besonderes Risiko</option>
+            <option value="2" title="Verdacht auf Infektion oder Kontakt zu MRE">IRG 2 – Potenziell infektiös</option>
+            <option value="3" title="Nachgewiesene Infektion mit MRE, Norovirus etc.">IRG 3 – Bestätigte Infektion / MRE</option>
+            <option value="4" title="Hochkontagiöse oder meldepflichtige Erkrankung">IRG 4 – Hochkontagiös / Meldepflicht</option>
+          </select>
+        </label>
+      
+        <!-- Erreger -->
+        <label for="infektion_erreger">Erreger / Besiedlungsort
+          <input type="text" id="infektion_erreger" name="infektion_erreger" placeholder="z. B. MRSA, Nasen-Rachen-Raum">
+        </label>
+      
+        <!-- AB-Therapie -->
+        <label for="infektion_antibiose">Antibiotikatherapie
+          <textarea id="infektion_antibiose" name="infektion_antibiose" placeholder="z. B. Meropenem 3x1g i.v."></textarea>
+        </label>
+      </details>
+
+      <details class="accordion">
+        <summary>Laborparameter und BGA</summary>
+      
+        <div class="input-pair">
+          <label for="hb">Hämoglobin (Hb) [g/dl]
+            <input type="text" id="hb" name="hb" step="0.1" placeholder="z. B. 14.0">
+          </label>
+          <label for="hkt">Hämatokrit (Hkt)
+            <input type="text" id="hkt" name="hkt" step="0.01" placeholder="z. B. 0.40">
+          </label>
+        </div>
+
+        <div class="input-pair">
+          <label for="pao2">Sauerstoffpartialdruck (paO₂) [mmHg]
+            <input type="text" id="pao2" name="pao2" placeholder="z. B. 80">
+          </label>
+          <label for="paco2">Kohlendioxidpartialdruck (paCO₂) [mmHg]
+            <input type="text" id="paco2" name="paco2" placeholder="z. B. 40">
+          </label>
+        </div>
+
+        <div class="input-pair">
+          <label for="ph">pH-Wert
+            <input type="text" id="ph" name="ph" step="0.01" placeholder="z. B. 7.40">
+          </label>
+          <label for="lactat">Lactat [mg/dl]
+            <input type="text" id="lactat" name="lactat" placeholder="z. B. 7">
+          </label>
+        </div>
+        
+        <div class="input-pair">
+          <label for="hco3">Bicarbonat (aktuell) [mmol/l]
+            <input type="text" id="hco3" name="hco3" placeholder="z. B. 24">
+          </label>
+          <label for="be">Basenabweichung (BE) [mmol/l]
+            <input type="text" id="be" name="be" step="0.1" placeholder="z. B. 0">
+          </label>
+        </div>
+
+        <div class="input-pair">
+          <label for="na">Natrium (Na⁺) [mmol/l]
+            <input type="text" id="na" name="na" step="0.1" placeholder="z. B. 140">
+          </label>
+          <label for="k">Kalium (K⁺) [mmol/l]
+            <input type="text" id="k" name="k" step="0.1" placeholder="z. B. 4.2">
+          </label>
+        </div>
+      
+        <div class="input-pair">
+          <label for="cl">Chlorid (Cl⁻) [mmol/l]
+            <input type="text" id="cl" name="cl" step="0.1" placeholder="z. B. 102">
+          </label>
+          <label for="ca">Calcium (Ca²⁺) [mmol/l]
+            <input type="text" id="ca" name="ca" step="0.01" placeholder="z. B. 1.2">
+          </label>
+        </div>
+
+        <label for="labor_sonstige">Sonstige Werte
+          <input type="text" id="labor_sonstige" name="labor_sonstige" placeholder="z.B. Glucose 90 [mg/dl]">
+        </label>
+      </details>
+
+      <details class="accordion">
+        <summary>Medikation</summary>
+      
+        <label for="medikation">
+          <textarea id="medikation" name="medikation" placeholder="z. B. Propofol"></textarea>
+        </label>
+      </details>
+
+    </section>
+  
+    <section>
+      <h2>Instrumentierung</h2>
+    
+      <!-- Katheter / Zugänge -->
+      <details class="accordion" open>
+        <summary>Instrumentierung</summary>
+        <ul class="checklist" id="katheterZugaenge">
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_pvk" name="zugang_pvk" value="PVK">
+              <span>peripherer Venenkatheter</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_zvk" name="zugang_zvk" value="ZVK">
+              <span>ZVK</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_shaldon" name="zugang_shaldon" value="Shaldon">
+              <span>Shaldon</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_arterie" name="zugang_arterie" value="Arterie">
+              <span>Arterie</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_pulmonalis" name="zugang_pulmonalis" value="Pulmonaliskatheter">
+              <span>Pulmonaliskatheter</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_picco" name="zugang_picco" value="PiCCO">
+              <span>PiCCO</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_icp" name="zugang_icp" value="ICP">
+              <span>ICP-Sonde</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_dk" name="zugang_dk" value="DK">
+              <span>Dauerkatheter</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_faekal" name="zugang_faekal" value="Fäkal">
+              <span>Fäkalkollektor</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="zugang_sonstiger" name="zugang_sonstiger" value="Sonstiger">
+              <input type="text" id="zugang_sonstiger" placeholder="Sonstige Katheter">
+            </label>
+          </li>
+        </ul>
+      </details>
+
+      <!-- Drainagen -->
+      <details class="accordion">
+        <summary>Drainagen</summary>
+        <ul class="checklist" id="drainagenListe">
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="drainage_thorax" name="drainage_thorax" value="Thoraxdrainage">
+              <span>Thoraxdrainage</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="drainage_evd" name="drainage_evd" value="Externe Ventrikeldrainage (EVD)">
+              <span>Externe Ventrikeldrainage (EVD)</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="drainage_sonstige" name="drainage_sonstige" value="Sonstige">
+              <input type="text" id="drainage_sonstige_text" name="drainage_sonstige_text" placeholder="Sonstige Drainage(n)">
+            </label>
+          </li>
+        </ul>
+      </details>
+    
+      <!-- Geräte -->
+      <details class="accordion">
+        <summary>Technische Geräte</summary>
+        <ul class="checklist" id="geraeteListe">
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="device_perfusoren" name="device_perfusoren" value="Perfusoren">
+              <span>Perfusoren</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="device_ecmo" name="device_ecmo" value="ECMO">
+              <span>ECMO / ECLA</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="device_iabp" name="device_iabp" value="IABP">
+              <span>IABP</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="device_respirator" name="device_respirator" value="Respirator">
+              <span>Respirator</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="device_inkubator" name="device_inkubator" value="Inkubator">
+              <span>Inkubator</span>
+            </label>
+          </li>
+          <li>
+            <label class="checklist-item">
+              <input type="checkbox" id="device_sonstiger" name="device_sonstiger" value="Sonstiger">
+              <input type="text" id="device_sonstiger" placeholder="Sonstiges Gerät(e)">
+            </label>
+          </li>
+        </ul>
+      </details>
+    
+      <!-- Freitext -->
+      <label for="instrument_freitext">Freitext
+        <textarea id="instrument_freitext" name="instrument_freitext" placeholder="Weitere Angaben…"></textarea>
+      </label>
+    </section>
+    
+    <section>
+      <h2>Evaluation</h2>
+    
+      <label for="arzt">Gesprächsführender Arzt
+        <input type="text" id="arzt" name="arzt" placeholder="Name des Arztes">
+      </label>
+
+
+      <div class="input-pair">
+      <!-- Transportmittel -->
+      <label for="transportmittel">Transportmittel
+        <select id="transportmittel" name="transportmittel">
+          <option>VEF</option>
+          <option>ITW</option>
+          <option>ITH</option>
+          <option>RTH</option>
+          <option>Sonstiges</option>
+        </select>
+      </label>
+    
+      <!-- Entscheidung -->
+      <label for="decision">Entscheidung
+        <select id="decision" name="decision">
+          <option value="angenommen">Angenommen</option>
+          <option value="vorbehalt">Angenommen unter Vorbehalt</option>
+          <option value="abgelehnt">Abgelehnt</option>
+        </select>
+      </label>
+      </div>
+
+      <!-- Kommentar bei Vorbehalt -->
+      <div id="reservationComment" style="display: none;">
+        <label for="vorbehaltKommentar">Kommentar (bei Vorbehalt)
+          <textarea id="vorbehaltKommentar" name="vorbehaltKommentar"></textarea>
+        </label>
+      </div>
+    
+      <!-- Begründung bei Ablehnung -->
+      <div id="rejectionReason" style="display: none;">
+        <label for="empfohlenesTransportmittel">Empfohlenes Transportmittel
+          <input type="text" id="empfohlenesTransportmittel" name="empfohlenesTransportmittel">
+        </label>
+        <label for="ablehnungBegruendung">Begründung
+          <textarea id="ablehnungBegruendung" name="ablehnungBegruendung"></textarea>
+        </label>
+      </div>
+    
+      <!-- Zeitpunkte -->
+
+      <div class="input-pair">
+      <label for="entscheidungszeitpunkt">Zeitpunkt der Entscheidung
+        <input type="text" id="entscheidungszeitpunkt" name="entscheidungszeitpunkt" placeholder="TT.MM.JJJJ HH:MM" inputmode="text">
+      </label>
+    
+      <label for="rueckmeldung">Rückmeldung an ILS/KITH
+        <input type="text" id="rueckmeldung" name="rueckmeldung" placeholder="HH:MM" inputmode="numeric" >
+      </label>
+      </div>
+    </section>
+
+    <div class="navigation">
+    </div>
+  
+    <div class="button-group">
+      <button type="button" id="prevBtn" disabled>Zurück</button>
+      <button type="button" id="nextBtn">Weiter</button>
+    </div>
+  </form>
+  
