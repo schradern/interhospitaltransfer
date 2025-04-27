@@ -59,7 +59,7 @@ export async function renderEntriesList(appElement) {
             entry.style.transition = 'transform 0.2s ease';
   
             if (currentX < -60) {
-              entry.style.transform = 'translateX(-100px)';
+              entry.style.transform = `translateX(-100px)`;
               swiped = true;
             } else {
               entry.style.transform = 'translateX(0)';
