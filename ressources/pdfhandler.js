@@ -210,6 +210,9 @@ export function exportFormToPDF(formId = "transferForm") {
   addRow([["Quellklinik", safe(data.quellklinik_name)], ["Zielklinik", safe(data.zielklinik_name)]]);
   addRow([["Station", safe(data.quellklinik_station)], ["Station", safe(data.zielklinik_station)]]);
   addRow([["Telefon", safe(data.quellklinik_tel)], ["Telefon", safe(data.zielklinik_tel)]]);
+  if (data.quellklinik_ansprechpartner || data.zielklinik_ansprechpartner) {
+    addRow([["Ansprechpartner", safe(data.quellklinik_ansprechpartner)], ["Ansprechpartner", safe(data.zielklinik_ansprechpartner)]])
+  }
 
   if ((data.landeplatz_quellklinik === 'on' || data.landeplatz_zielklinik === 'on') || (data.transportmittel === 'RTH' || data.transportmittel === 'ITH')) {
     let lpq = data.landeplatz_quellklinik === 'on' 
