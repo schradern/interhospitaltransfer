@@ -1,3 +1,4 @@
+import { askConfirmation, cancelConfirmation } from './confirmdialog.js';
 import { isCryptoAvailable } from './crypto.js';
 import { fetchAllRecords } from './db.js';
 import { RETENTION_DAYS } from './retention.js';
@@ -50,6 +51,8 @@ export async function lockApp() {
   elements.layout.hidden = true;
   elements.layout.inert = true;
   hideStatus();
+  // Offene Rückfrage gilt als abgebrochen; sie läge sonst als modaler Dialog über dem Sperrbildschirm.
+  cancelConfirmation();
   try {
     await beforeLock();
   } catch {
@@ -153,7 +156,8 @@ async function submitPassphrase(elements, onUnlocked) {
 }
 
 async function confirmReset(elements, onReset) {
-  if (!window.confirm(RESET_QUESTION)) return;
+  const isConfirmed = await askConfirmation({ message: RESET_QUESTION, confirmLabel: 'Löschen', isDestructive: true });
+  if (!isConfirmed) return;
   try {
     await resetVault();
     onReset();

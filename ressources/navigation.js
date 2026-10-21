@@ -1,3 +1,4 @@
+import { askConfirmation } from './confirmdialog.js';
 import { decryptJson, encryptJson } from './crypto.js';
 import { renderEntriesList } from './entryhandler.js';
 import { initForm, hasPendingChanges, discardPendingChanges } from './formhandler.js';
@@ -100,12 +101,22 @@ function handleHistoryChange(app, state) {
     history.replaceState({ page: 'list' }, '');
     return;
   }
-  if (currentPage === 'form' && hasPendingChanges() && !window.confirm(DISCARD_QUESTION)) {
+  if (currentPage === 'form' && hasPendingChanges()) {
+    // Zurück ist bereits passiert: Formular-Eintrag sofort wiederherstellen, erst danach fragen.
     history.pushState({ page: 'form' }, '');
+    confirmDiscard();
     return;
   }
   discardPendingChanges();
   showList(app);
+}
+
+// Bei Bestätigung erneut zurück; der dann ausgelöste popstate findet keine Änderungen mehr und zeigt die Liste.
+async function confirmDiscard() {
+  const isConfirmed = await askConfirmation({ message: DISCARD_QUESTION, confirmLabel: 'Verwerfen', isDestructive: true });
+  if (!isConfirmed || currentPage !== 'form') return;
+  discardPendingChanges();
+  history.back();
 }
 
 async function showList(app) {

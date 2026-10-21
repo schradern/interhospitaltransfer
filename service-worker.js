@@ -1,5 +1,5 @@
 // Bei jeder Veröffentlichung erhöhen, damit Nutzer die neue Version erhalten.
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `interhospitaltransfer-${CACHE_VERSION}`;
 const APP_SHELL = [
   './',
@@ -22,6 +22,7 @@ const APP_SHELL = [
   './libs/jspdf.umd.min.js',
   './libs/fonts/NotoSans-Regular.ttf',
   './libs/fonts/NotoSans-Bold.ttf',
+  './ressources/confirmdialog.js',
   './ressources/crypto.js',
   './ressources/db.js',
   './ressources/entryhandler.js',
