@@ -1,157 +1,150 @@
-import { getDB } from './db.js';
-import { navigateTo } from './navigation.js';
-import { populateForm } from './formhandler.js';
+import { loadEntries, removeEntry } from './entrystore.js';
+import { expiryOf, lastChangeOf } from './retention.js';
+import { enableSwipeToDelete } from './swipe.js';
+import { showStatus } from './status.js';
+import { isUnlocked } from './vault.js';
 
-export async function renderEntriesList(appElement) {
-  const db = await getDB();
-  const tx = db.transaction(['items'], 'readonly');
-  const store = tx.objectStore('items');
-  const request = store.getAll();
+// Kurzformate ohne Jahr: bei 7 Tagen Speicherdauer eindeutig und auch auf schmalen Bildschirmen vollständig lesbar.
+const DATE_FORMAT = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+const DAY_FORMAT = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit' });
+const UNREADABLE_MESSAGE = 'Dieser Eintrag kann nicht entschlüsselt werden und lässt sich nur löschen.';
 
-  request.onsuccess = () => {
-    const items = request.result;
+export async function renderEntriesList(container, { onOpen }) {
+  container.replaceChildren(createMessage('Einträge werden geladen …'));
 
-    const entryHTML = items.length > 0
-      ? items.map((item, index) =>
-          `<div class="swipe-container" data-id="${item.id || index}">
-                <div class="delete-btn">Löschen</div>
-                <div class="entry">
-                    <p><b>${item.patientenname || 'Unbenannter Eintrag'}</b><br>
-                    <small>${new Date(item.created || item.updated).toLocaleString()}</small></p>
-                    <button class="delete-inline">Löschen</button>
-                </div>
-            </div>`
-        ).join('')
-      : `<div class="entry empty"><p>Noch keine gespeicherten Transfers.</p></div>`;
+  let entries;
+  try {
+    entries = await loadEntries();
+  } catch (error) {
+    if (isUnlocked()) container.replaceChildren(createMessage(error.message));
+    return;
+  }
+  // Während des Entschlüsselns gesperrt: keine Klartexte mehr in die Seite schreiben.
+  if (!isUnlocked()) return;
 
-    appElement.innerHTML = `<div id="entries">${entryHTML}</div>`;
+  if (entries.length === 0) {
+    container.replaceChildren(createEmptyMessage());
+    return;
+  }
 
-    document.querySelectorAll('.swipe-container').forEach(container => {
-        const entry = container.querySelector('.entry');
-        const id = Number(container.dataset.id);
-  
-        let startX = 0;
-        let currentX = 0;
-        let dragging = false;
-        let swiped = false;
-        let tappedDelete = false;
-        const isMobile = 'ontouchstart' in window;
-  
-        // === Swipe only on mobile ===
-        if (isMobile) {
-          entry.addEventListener('touchstart', e => {
-            startX = e.touches[0].clientX;
-            dragging = true;
-            swiped = false;
-            entry.style.transition = 'none';
-          });
-  
-          entry.addEventListener('touchmove', e => {
-            if (!dragging) return;
-            currentX = e.touches[0].clientX - startX;
-            if (currentX < 0) {
-              entry.style.transform = `translateX(${currentX}px)`;
-            }
-          });
-  
-          entry.addEventListener('touchend', () => {
-            dragging = false;
-            entry.style.transition = 'transform 0.2s ease';
-  
-            if (currentX < -60) {
-              entry.style.transform = `translateX(-100px)`;
-              swiped = true;
-            } else {
-              entry.style.transform = 'translateX(0)';
-            }
-  
-            currentX = 0;
-          });
-        }
-  
-        // === Hide swipe if tapping elsewhere ===
-        document.addEventListener('touchstart', e => {
-          if (!entry.contains(e.target)) {
-            entry.style.transform = 'translateX(0)';
-          }
-        });
-  
-        // === Tap on entry (open only if not deleting) ===
-        entry.addEventListener('click', async () => {
-          if (swiped || tappedDelete) {
-            swiped = false;
-            tappedDelete = false;
-            return;
-          }
-  
-          const db = await getDB();
-          const tx = db.transaction('items', 'readonly');
-          const store = tx.objectStore('items');
-          const request = store.get(id);
-  
-          request.onsuccess = async () => {
-            const item = request.result;
-            if (!item) return;
-            await navigateTo('form', item);
-          };
-        });
-  
-        // === Delete button (desktop inline)
-        const deleteInline = container.querySelector('.delete-inline');
-        deleteInline?.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          tappedDelete = true;
-          await deleteEntry(id, container);
-        });
-  
-        // === Delete button (iOS red area)
-        const deleteBtn = container.querySelector('.delete-btn');
-        deleteBtn?.addEventListener('touchstart', (e) => {
-          e.stopPropagation();
-          tappedDelete = true;
-        });
-  
-        deleteBtn?.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          tappedDelete = true;
-          await deleteEntry(id, container);
-        });
-  
-        async function deleteEntry(id, container) {
-          const db = await getDB();
-          const tx = db.transaction('items', 'readwrite');
-          await tx.objectStore('items').delete(id);
-          await tx.complete;
-          container.remove();
-          console.log('🗑️ gelöscht:', id);
-        }
-      });
-    };
-  
-
-  request.onerror = () => {
-    appElement.innerHTML = `<div class="entry empty">Failed to load entries.</div>`;
-  };
+  entries.sort((first, second) => lastChangeOf(second) - lastChangeOf(first));
+  const list = document.createElement('ul');
+  list.className = 'entries';
+  list.setAttribute('aria-label', 'Gespeicherte Transfers');
+  list.append(...entries.map(entry => createEntryItem(entry, {
+    onOpen,
+    onDelete: item => confirmAndDelete(entry, item, container),
+  })));
+  container.replaceChildren(createListToolbar(list, entries.length), list);
+  enableSwipeToDelete(list);
 }
 
-export async function editEntry(id) {
-    const db = await getDB();
-    const tx = db.transaction('items', 'readonly');
-    const store = tx.objectStore('items');
-    const request = store.get(id);
-  
-    request.onsuccess = async () => {
-      const item = request.result;
-      if (!item) return;
-  
-      await navigateTo('form');
-      setTimeout(() => {
-        // Warte kurz bis DOM fertig
-        populateForm(item);
-      }, 100); // ggf. Timeout verlängern, wenn nötig
-    };
-  
-    request.onerror = () => {
-      console.error('❌ Fehler beim Laden des Eintrags');
-    };
+// Löschen nur im Bearbeiten-Modus sichtbar: zwei bewusste Schritte plus Rückfrage, ohne Wischgeste bedienbar.
+function createListToolbar(list, entryCount) {
+  const toolbar = document.createElement('div');
+  toolbar.className = 'list-toolbar';
+  const count = createTextElement('span', describeCount(entryCount));
+  count.className = 'list-count';
+  const editButton = createButton('list-edit', 'Bearbeiten', 'Einträge bearbeiten');
+  editButton.setAttribute('aria-pressed', 'false');
+  editButton.addEventListener('click', () => {
+    const isEditing = list.classList.toggle('is-editing');
+    editButton.textContent = isEditing ? 'Fertig' : 'Bearbeiten';
+    editButton.setAttribute('aria-pressed', String(isEditing));
+  });
+  toolbar.append(count, editButton);
+  return toolbar;
+}
+
+function describeCount(entryCount) {
+  return entryCount === 1 ? '1 gespeicherter Transfer' : `${entryCount} gespeicherte Transfers`;
+}
+
+function createEntryItem(entry, { onOpen, onDelete }) {
+  const title = titleOf(entry);
+  const item = document.createElement('li');
+  item.className = 'swipe-container';
+
+  const swipeDeleteButton = createButton('delete-btn', 'Löschen', `${title} löschen`);
+  const row = document.createElement('div');
+  row.className = 'entry';
+
+  const openButton = createButton('entry-open', '', `${title} öffnen`);
+  openButton.append(
+    createTextElement('strong', title),
+    createTextElement('small', describeRoute(entry)),
+    createTextElement('small', describeTimestamp(entry)),
+  );
+  const inlineDeleteButton = createButton('delete-inline', 'Löschen', `${title} löschen`);
+
+  openButton.addEventListener('click', () => {
+    if (row.classList.contains('is-swiped')) row.classList.remove('is-swiped');
+    else if (item.closest('.entries')?.classList.contains('is-editing')) return;
+    else if (entry.isUnreadable) showStatus(UNREADABLE_MESSAGE, 'error');
+    else onOpen(entry);
+  });
+  swipeDeleteButton.addEventListener('click', () => onDelete(item));
+  inlineDeleteButton.addEventListener('click', () => onDelete(item));
+
+  row.append(openButton, inlineDeleteButton);
+  item.append(swipeDeleteButton, row);
+  return item;
+}
+
+async function confirmAndDelete(entry, item, container) {
+  // Ohne Patientennamen: Der Systemdialog hält Zeitgeber an und bliebe sonst bis zur Antwort sichtbar.
+  if (!window.confirm('Diesen Eintrag endgültig löschen?')) {
+    item.querySelector('.entry')?.classList.remove('is-swiped');
+    return;
   }
+  try {
+    await removeEntry(entry.id);
+    item.remove();
+    showStatus('Eintrag gelöscht.');
+    const remaining = container.querySelectorAll('.swipe-container').length;
+    if (remaining === 0) container.replaceChildren(createEmptyMessage());
+    else container.querySelector('.list-count').textContent = describeCount(remaining);
+  } catch (error) {
+    showStatus(error.message, 'error');
+  }
+}
+
+function titleOf(entry) {
+  if (entry.isUnreadable) return 'Nicht lesbarer Eintrag';
+  return entry.patientenname || 'Unbenannter Eintrag';
+}
+
+function describeRoute(entry) {
+  const source = entry.quellklinik_name || '–';
+  const target = entry.zielklinik_name || '–';
+  return source === '–' && target === '–' ? 'Keine Klinikangaben' : `${source} → ${target}`;
+}
+
+function describeTimestamp(entry) {
+  return `Geändert ${DATE_FORMAT.format(lastChangeOf(entry))} · Löschung ab ${DAY_FORMAT.format(expiryOf(entry))}`;
+}
+
+function createButton(className, text, accessibleName) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = className;
+  button.textContent = text;
+  button.setAttribute('aria-label', accessibleName);
+  return button;
+}
+
+function createTextElement(tagName, text) {
+  const element = document.createElement(tagName);
+  element.textContent = text;
+  return element;
+}
+
+function createMessage(text) {
+  const message = createTextElement('p', text);
+  message.className = 'empty-state';
+  return message;
+}
+
+function createEmptyMessage() {
+  return createMessage('Noch keine gespeicherten Transfers. Mit „Neu“ einen Transfer anlegen.');
+}

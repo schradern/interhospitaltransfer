@@ -1,0 +1,106 @@
+/* Statusmeldung */
+.status {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  left: 50%;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 20;
+  width: max-content;
+  max-width: min(32rem, calc(100% - 2rem));
+  padding: 0.75rem 1rem;
+  color: var(--bg);
+  background: var(--fg);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+/* Im Formular oben unter der Kopfzeile: die Aktionsleiste ("Weiter/Speichern") bleibt immer frei,
+   egal ob sie unten fixiert ist oder bei kurzen Schritten mitten im Bild steht. */
+body:has(.form-actions) .status {
+  top: calc(4.5rem + env(safe-area-inset-top));
+  bottom: auto;
+}
+
+.status-close {
+  min-width: 44px;
+  min-height: 44px;
+  margin: -0.75rem -0.75rem -0.75rem 0.25rem;
+  font: inherit;
+  font-size: 1.375rem;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.status-action {
+  min-height: 44px;
+  margin: -0.5rem 0 -0.5rem 0.75rem;
+  padding: 0.25rem 0.875rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--fg);
+  background: var(--bg);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.status[data-tone="warning"] {
+  color: #ffffff;
+  background: var(--warning-fill);
+}
+
+.status[data-tone="error"] {
+  color: #ffffff;
+  background: var(--danger-fill);
+}
+
+/* Dialog */
+dialog {
+  max-width: min(40rem, calc(100% - 2rem));
+  max-height: 85dvh;
+  padding: 0;
+  color: var(--fg);
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.dialog-content {
+  padding: 1.5rem;
+}
+
+.dialog-content h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.dialog-content h3 {
+  margin: 1.25rem 0 0.25rem;
+  font-size: 1rem;
+}
+
+.dialog-content ul {
+  padding-left: 1.25rem;
+}
+
+.dialog-content a {
+  color: var(--accent);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}

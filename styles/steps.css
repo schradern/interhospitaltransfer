@@ -1,0 +1,88 @@
+/* Schrittnavigation: Punkte auf kleinen Bildschirmen, beschriftete Seitenleiste am Desktop */
+.navigation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.dot {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dot::before {
+  content: "";
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--border-strong);
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.dot.active::before {
+  background: var(--accent-fill);
+  transform: scale(1.35);
+}
+
+.step-label {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .navigation {
+    position: sticky;
+    top: 5.5rem;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-self: start;
+    gap: 0.125rem;
+    margin: 0;
+    padding-bottom: 2rem;
+  }
+
+  .dot {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    height: auto;
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+    font: inherit;
+    font-size: 0.9375rem;
+    color: var(--fg-muted);
+    text-align: left;
+    border-radius: var(--radius-small);
+  }
+
+  .dot::before {
+    flex-shrink: 0;
+  }
+
+  .dot:hover {
+    color: var(--fg);
+    background: var(--surface);
+  }
+
+  .dot.active {
+    font-weight: 600;
+    color: var(--fg);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .dot.active::before {
+    transform: none;
+  }
+
+  .step-label {
+    display: inline;
+  }
+}

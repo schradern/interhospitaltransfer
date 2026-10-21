@@ -1,60 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Strukturierte Erfassung von Verlegungsanfragen (Interhospitaltransfer) mit lokaler Speicherung und PDF-Export.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f6f6f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Transfer">
   <title>Interhospitaltransfer</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/overlays.css">
+  <link rel="stylesheet" href="styles/form.css">
+  <link rel="stylesheet" href="styles/steps.css">
+  <link rel="stylesheet" href="styles/form-layout.css">
+  <link rel="stylesheet" href="styles/list.css">
+  <link rel="stylesheet" href="styles/lock.css">
+  <script type="module" src="main.js"></script>
 </head>
 <body>
-    <div class="layout">
-  <header class="nav">
-    <div clas="nav-leading">
-        <button id="navBack">Back</button>
-    </div>
-    <div class="nav-title" id="navTitle">Interhospitaltransfer</div>
-    <div class="nav-trailing">
-        <button id="navAdd">Add</button>
-        <button id="navDownload" class="hidden">PDF</button>
-    </div>
-  </header>
+  <div class="layout" hidden>
+    <header class="nav">
+      <div class="nav-leading">
+        <button type="button" id="navLock" class="nav-lock" title="App sperren"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/></svg><span class="nav-lock-label">App sperren</span></button>
+        <button type="button" id="navBack" class="nav-back" hidden><span aria-hidden="true">‹</span> <span class="nav-back-label">Übersicht</span></button>
+      </div>
+      <div class="nav-title" id="navTitle">Interhospitaltransfer</div>
+      <div class="nav-trailing">
+        <button type="button" id="navAdd" class="nav-primary"><span aria-hidden="true">+</span> Neu</button>
+        <button type="button" id="navDownload" class="nav-secondary" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm7 1.5V9h5.5ZM8 13v2h8v-2Zm0 4v2h8v-2Z"/></svg><span>PDF</span></button>
+        <button type="button" id="navSave" class="nav-primary" title="Speichern (Strg/⌘ + S)" hidden>Speichern</button>
+      </div>
+    </header>
 
-  <main>
-    <div id="app"></div>
-  </main>
+    <main id="app"></main>
 
-  <footer class="footer">
-    <div class="footer-note">
-      <a href="#" onclick="document.getElementById('legalPopover').style.display='block';" style="color: #777;">Nutzungshinweis</a> | Version 1.0 by <a href="https://www.medizin.dev" target="_blank" style="color: #777;">Dr. med. Nikolas B. Schrader</a>
-    </div>
-  </footer>
-  <div id="legalPopover">
-      <p><strong>Nutzungshinweis: Interhospitaltransfer App</strong></p>
-      <p>Durch Nutzung der Anwendung akzeptieren Sie die folgenden Bedingungen:</p>
-      <ul style="margin-left: 1rem;">
-        <li>Beim Löschen des Browser-Cache, Zurücksetzen des Gerätes oder der IndexedDB können lokal gespeicherte Daten unwiederbringlich verloren gehen.</li>
-        <li>Der Anwender ist eigenverantwortlich für die Handhabung und Speicherung personenbezogener Daten (insbesondere Einhaltung der DSGVO).</li>
-        <li>Diese Webanwendung dient ausschließlich der unterstützenden Erfassung von Verlegungsanfragen. Sie ersetzt keine medizinische Dokumentation im Sinne gesetzlicher Vorschriften. Für die korrekte Erfassung, Aufbewahrung und Sicherung von Patientendaten bleibt der Anwender verantwortlich.</li>
+    <footer class="footer">
+      <button type="button" class="link-button open-legal">Nutzungshinweis &amp; Datenschutz</button>
+      <a href="https://medizin.dev/impressum" target="_blank" rel="noopener noreferrer">Impressum</a>
+      <span>Version 1.2</span>
+      <a href="https://www.medizin.dev" target="_blank" rel="noopener noreferrer">medizin.dev</a>
+    </footer>
+  </div>
+
+  <div id="lockScreen" class="lock-screen" hidden>
+    <form id="lockForm" class="lock-card" novalidate>
+      <h1 id="lockTitle" class="lock-title">Gesperrt</h1>
+      <p id="lockDescription"></p>
+      <label for="passphrase">Passwort
+        <input type="password" id="passphrase" autocomplete="current-password" spellcheck="false" autocapitalize="off">
+      </label>
+      <label for="passphraseConfirm" id="confirmField" hidden>Passwort wiederholen
+        <input type="password" id="passphraseConfirm" autocomplete="new-password" spellcheck="false" autocapitalize="off">
+      </label>
+      <p id="lockError" class="lock-error" role="alert" hidden></p>
+      <button type="submit" id="lockSubmit" class="button-primary">Entsperren</button>
+      <p id="lockHint" class="lock-hint"></p>
+      <button type="button" id="resetVault" class="link-button lock-reset">Passwort vergessen? Alle Daten löschen</button>
+    </form>
+    <p class="lock-links">
+      <button type="button" class="link-button open-legal">Nutzungshinweis &amp; Datenschutz</button>
+      <a href="https://medizin.dev/impressum" target="_blank" rel="noopener noreferrer">Impressum</a>
+    </p>
+  </div>
+
+  <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+
+  <dialog id="legalDialog" aria-labelledby="legalTitle">
+    <div class="dialog-content">
+      <h2 id="legalTitle">Nutzungshinweis &amp; Datenschutz</h2>
+      <h3>Zweckbestimmung</h3>
+      <p>Die Anwendung dient ausschließlich der strukturierten Erfassung, lokalen Speicherung und dem Ausdruck (PDF) von Angaben zu Verlegungsanfragen – vergleichbar mit einem Papierformular.</p>
+      <p>Sie wertet keine Daten aus, führt keine Berechnungen durch und gibt keine Empfehlungen, Warnungen oder Bewertungen. Sie ist nicht dazu bestimmt, diagnostische oder therapeutische Entscheidungen zu unterstützen. Alle medizinischen Bewertungen und Entscheidungen trifft ausschließlich die anwendende Person.</p>
+      <p>Die Anwendung ist kein Medizinprodukt im Sinne der Verordnung (EU) 2017/745 (MDR) und darf nicht als solches eingesetzt werden.</p>
+
+      <h3>Datenschutz</h3>
+      <ul>
+        <li><strong>Eingaben:</strong> werden ausschließlich lokal im Browser dieses Geräts gespeichert, mit einem selbst gewählten Passwort verschlüsselt (AES-GCM) und nicht an den Anbieter oder Dritte übertragen. Das Passwort wird nicht gespeichert und kann nicht wiederhergestellt werden.</li>
+        <li><strong>Speicherdauer:</strong> Einträge werden 7 Tage nach der letzten Änderung automatisch gelöscht. Die Löschung erfolgt, sobald die App das nächste Mal läuft (beim Start und stündlich während der Nutzung); bis dahin bleiben abgelaufene Einträge verschlüsselt auf dem Gerät. Manuelles Löschen ist jederzeit möglich.</li>
+        <li><strong>Hosting:</strong> Die Programmdateien werden von einem Server der Hetzner Online GmbH in Deutschland ausgeliefert. Beim Aufruf werden technisch notwendige Zugriffsdaten (IP-Adresse, Zeitpunkt, abgerufene Datei, Browserkennung) im Server-Protokoll gespeichert und nach sieben Tagen gelöscht (Art. 6 Abs. 1 lit. f DSGVO: sichere Bereitstellung der App). Eine Übermittlung in Drittländer findet nicht statt.</li>
+        <li>Keine Cookies, kein Tracking, keine Analyse-Werkzeuge, keine Inhalte von Drittanbietern.</li>
+        <li><strong>Verantwortlich</strong> für die Bereitstellung der App (Abruf der Programmdateien): Dr. med. Nikolas B. Schrader (medizin.dev), Kontakt siehe <a href="https://medizin.dev/impressum" target="_blank" rel="noopener noreferrer">Impressum</a>.</li>
+        <li><strong>In der App erfasste Daten:</strong> Der Anbieter hat darauf keinen Zugriff. Verantwortlich ist ausschließlich die anwendende Person bzw. deren Einrichtung; Anfragen zu diesen Daten (z. B. Auskunft, Löschung) sind dorthin zu richten.</li>
+        <li><strong>Nachprüfbarkeit:</strong> Der vollständige Quellcode ist öffentlich einsehbar (<a href="https://github.com/schradern/interhospitaltransfer" target="_blank" rel="noopener noreferrer">GitHub-Projektseite</a>); die hier beschriebene Datenverarbeitung lässt sich dort nachvollziehen.</li>
+      </ul>
+
+      <h3>Nutzung &amp; Verantwortung</h3>
+      <ul>
+        <li><strong>Angaben prüfen:</strong> Alle erfassten Angaben – insbesondere der erzeugte PDF-Erfassungsbogen – sind von der anwendenden Person vor jeder Weitergabe oder Verwendung auf Richtigkeit und Vollständigkeit zu prüfen.</li>
+        <li>Beim Löschen der Browserdaten, Zurücksetzen des Geräts, Vergessen des Passworts oder automatischer Speicherbereinigung durch den Browser gehen Einträge unwiederbringlich verloren.</li>
+        <li>Die App sperrt sich nach 15 Minuten ohne Eingabe. Auf gemeinsam genutzten Geräten das Passwort nicht im Browser speichern und die App nach Gebrauch sperren.</li>
+        <li>Die anwendende Person bzw. deren Einrichtung bleibt Verantwortliche im Sinne der DSGVO für die erfassten Patientendaten. Verschlüsselung, automatische Sperre und Löschfrist sind technische Hilfen zur Unterstützung; sie ersetzen weder die Prüfung durch die Einrichtung (z. B. Datenschutzbeauftragte, Gerätesicherheit, Verarbeitungsverzeichnis) noch gelten sie für exportierte oder ausgedruckte PDFs.</li>
+        <li>Die Anwendung ersetzt keine medizinische Dokumentation im Sinne gesetzlicher Vorschriften.</li>
         <li>Die Nutzung erfolgt auf eigene Verantwortung. Es wird keine Gewähr für Vollständigkeit, Verfügbarkeit und Fehlerfreiheit übernommen.</li>
       </ul>
-      <p>Weitere Informationen und Source-Code: <a href="https://github.com/schradern/interhospitaltransfer" target="_blank" style="color: #007aff;">GitHub Projektseite</a></p>
-      <p style="text-align: center;">
-        <button onclick="document.getElementById('legalPopover').style.display='none'; document.getElementById('legalBackdrop').style.display='none';" 
-                style="margin-top: 1rem; background-color: #007aff; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 0.5rem; font-size: 1rem; cursor: pointer;">
-          Schließen
-        </button>
-      </p>
-  </div>
-</div>
-  <script src="libs/jspdf.umd.min.js"></script>
-  <script type="module" src="main.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => console.log('Service Worker registered:', registration))
-        .catch(error => console.error('Service Worker registration failed:', error));
-    }
-  </script>
+      <p>Lizenz: <a href="https://github.com/schradern/interhospitaltransfer/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT</a></p>
+      <div class="dialog-actions">
+        <button type="button" id="closeLegal" class="button-primary">Schließen</button>
+      </div>
+    </div>
+  </dialog>
 </body>
 </html>

@@ -1,0 +1,187 @@
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+}
+
+.list-edit {
+  min-height: 44px;
+  padding: 0.5rem 0.25rem 0.5rem 0.75rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.entries {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.swipe-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.entry {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border-radius: var(--radius);
+  transition: transform 0.2s ease;
+}
+
+.entry.is-dragging {
+  transition: none;
+}
+
+.entry.is-swiped {
+  transform: translateX(-100px);
+}
+
+.entry-open {
+  position: relative;
+  display: grid;
+  flex: 1;
+  gap: 0.125rem;
+  min-width: 0;
+  padding: 0.875rem 2.5rem 0.875rem 1.25rem;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.entry-open::after {
+  content: "›";
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  font-size: 1.5rem;
+  color: var(--fg-muted);
+  transform: translateY(-50%);
+}
+
+.entry-open strong,
+.entry-open small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.entry-open strong {
+  font-weight: 600;
+}
+
+.entry-open small {
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+}
+
+.delete-inline,
+.delete-btn {
+  font: inherit;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--danger-fill);
+  border: none;
+  cursor: pointer;
+}
+
+.delete-inline {
+  display: inline-flex;
+  margin-right: 0.75rem;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.875rem;
+  border-radius: var(--radius-small);
+}
+
+/* Wisch-Löschen: liegt hinter der Zeile und wird beim Wischen freigelegt */
+.delete-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  width: 100px;
+  font-size: 0.9375rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Ausgeblendet ohne Layoutsprung; per Tastatur weiterhin erreichbar */
+  .delete-inline {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .entry:hover .delete-inline,
+  .entry:focus-within .delete-inline {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .entry:hover {
+    background: var(--surface-muted);
+  }
+}
+
+@media (min-width: 768px) {
+  .entry-open {
+    grid-template-columns: minmax(10rem, 1fr) minmax(0, 1.4fr) auto;
+    align-items: baseline;
+    column-gap: 1.5rem;
+    padding-top: 1.125rem;
+    padding-bottom: 1.125rem;
+  }
+}
+
+/* Schmale Fenster: Löschen über Wischgeste bzw. im geöffneten Eintrag, kein reservierter Platz. */
+@media (max-width: 599px) {
+  .delete-inline {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .delete-inline {
+    display: none;
+  }
+
+  .delete-btn {
+    display: block;
+  }
+}
+
+/* Bearbeiten-Modus: Löschen auf allen Geräten sichtbar, Zeilen öffnen sich nicht. */
+.entries.is-editing .entry .delete-inline {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.entries.is-editing .entry-open {
+  cursor: default;
+}
+
+.entries.is-editing .entry-open::after {
+  content: none;
+}
