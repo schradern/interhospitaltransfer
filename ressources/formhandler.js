@@ -29,6 +29,8 @@ export function initForm(container, templateHtml, entry, { onSaved, initialStep 
     event.preventDefault();
     persistForm(form, onSaved);
   });
+  // Tastatur und Screenreader starten am Titel des Schritts statt am Seitenanfang.
+  form.querySelector('section.active h2')?.focus({ preventScroll: true });
   return form;
 }
 
@@ -58,6 +60,7 @@ function setupStepNavigation(form, initialStep) {
 
   const stepButtons = sections.map((section, index) => createStepButton(section, index, sections.length, () => showStep(index)));
   stepContainer.replaceChildren(...stepButtons);
+  enableArrowKeyNavigation(stepContainer, stepButtons);
 
   function showStep(index) {
     const hasChangedStep = index !== currentIndex;
@@ -68,6 +71,7 @@ function setupStepNavigation(form, initialStep) {
     stepButtons.forEach((button, buttonIndex) => {
       const isCurrent = buttonIndex === index;
       button.classList.toggle('active', isCurrent);
+      button.tabIndex = isCurrent ? 0 : -1;
       if (isCurrent) button.setAttribute('aria-current', 'step');
       else button.removeAttribute('aria-current');
     });
@@ -90,6 +94,34 @@ function setupStepNavigation(form, initialStep) {
   showStep(Math.min(initialStep, sections.length - 1));
 }
 
+// Schrittliste als ein einziger Tab-Halt; Pfeiltasten, Pos1 und Ende wechseln zwischen den Schritten.
+function enableArrowKeyNavigation(container, buttons) {
+  container.addEventListener('keydown', event => {
+    const targetIndex = stepIndexForKey(event.key, buttons.indexOf(document.activeElement), buttons.length);
+    if (targetIndex === null) return;
+    event.preventDefault();
+    buttons[targetIndex].focus();
+  });
+}
+
+function stepIndexForKey(key, currentIndex, stepCount) {
+  if (currentIndex < 0) return null;
+  switch (key) {
+    case 'ArrowDown':
+    case 'ArrowRight':
+      return (currentIndex + 1) % stepCount;
+    case 'ArrowUp':
+    case 'ArrowLeft':
+      return (currentIndex - 1 + stepCount) % stepCount;
+    case 'Home':
+      return 0;
+    case 'End':
+      return stepCount - 1;
+    default:
+      return null;
+  }
+}
+
 function createStepButton(section, index, stepCount, onSelect) {
   const button = document.createElement('button');
   button.type = 'button';
@@ -108,11 +140,12 @@ async function persistForm(form, onSaved) {
   if (isSaving) return;
   isSaving = true;
   try {
-    await storeEntry(readFormData(form));
+    const entry = readFormData(form);
+    await storeEntry(entry);
     hasUnsavedChanges = false;
     // Während des Speicherns gesperrt: keine Meldung über dem Sperrbildschirm.
     if (isUnlocked()) showStatus('Transfer gespeichert.');
-    onSaved();
+    onSaved(entry.id);
   } catch (error) {
     showStatus(`${error.message} Die Eingaben sind noch nicht gespeichert.`, 'error');
   } finally {

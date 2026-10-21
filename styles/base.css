@@ -21,12 +21,6 @@
   --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23111114'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
 }
 
-@media (min-width: 1024px) {
-  :root {
-    --content-width: 1080px;
-  }
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #000000;
@@ -54,6 +48,12 @@
 
 [hidden] {
   display: none !important;
+}
+
+/* Fokussierte Felder nicht unter der fixierten Kopfzeile bzw. Aktionsleiste verstecken. */
+html {
+  scroll-padding-top: 5rem;
+  scroll-padding-bottom: 6rem;
 }
 
 body {
@@ -92,7 +92,7 @@ main {
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.5rem;
   padding: max(0.5rem, env(safe-area-inset-top)) max(0.5rem, env(safe-area-inset-right), calc((100% - var(--content-width)) / 2)) 0.5rem max(0.5rem, env(safe-area-inset-left), calc((100% - var(--content-width)) / 2));
@@ -132,8 +132,11 @@ main {
   cursor: pointer;
 }
 
-/* App-Ebene (links): Sperren ist durch eine Trennlinie von der Seitennavigation abgesetzt. */
+/* App-Ebene (links): Sperren ist durch eine Trennlinie von der Seitennavigation abgesetzt.
+   Steht im Quelltext zuletzt (Tastatur: erst Seitenaktionen) und wird hier in die erste Spalte gesetzt. */
 .nav .nav-lock {
+  grid-row: 1;
+  grid-column: 1;
   color: var(--fg-muted);
 }
 

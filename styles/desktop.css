@@ -1,0 +1,506 @@
+/* Desktop (ab 1024 px): alle Anpassungen für große Bildschirme an einer Stelle, zuletzt geladen.
+   Leitbild "Arbeitsfläche": eine durchgehende Fläche ohne Karten, Gliederung nur über Abstand, Schrift und Haarlinien.
+   Hauptaktionen in Vordergrundfarbe; Blau bleibt Zuständen vorbehalten (Fokus, aktueller Schritt, ausgewählt). */
+@media (min-width: 1024px) {
+  :root {
+    --content-width: 1080px;
+    --bg: var(--surface);
+    --action-fill: var(--fg);
+    --on-action: var(--surface);
+    --radius-small: 0.5rem;
+    --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235c5c66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+    accent-color: var(--accent-fill);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a5a5ae' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+    }
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+
+  input,
+  textarea {
+    caret-color: var(--accent);
+  }
+
+  main {
+    padding-top: 2.5rem;
+  }
+
+  /* Kopfzeile: Ort links (Marke bzw. "Übersicht / Transfer"), Seitenaktionen rechts,
+     Sperren als App-Aktion ganz außen hinter einer Trennlinie. */
+  .nav {
+    display: flex;
+    gap: 0.25rem;
+    min-height: 3.5rem;
+    padding-top: max(0.375rem, env(safe-area-inset-top));
+    padding-bottom: 0.375rem;
+    background: var(--bg);
+    border-bottom-color: var(--border-subtle);
+  }
+
+  .nav-leading,
+  .nav-trailing {
+    display: contents;
+  }
+
+  .nav button {
+    min-height: 36px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--fg-muted);
+    border-radius: var(--radius-small);
+  }
+
+  .nav-title {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+
+  .nav[data-page="list"] .nav-title::before {
+    content: "";
+    flex-shrink: 0;
+    width: 1.375rem;
+    height: 1.375rem;
+    background: url("../icons/icon.svg") center / contain no-repeat;
+  }
+
+  .nav[data-page="form"] .nav-title::before {
+    content: "/" / "";
+    font-weight: 400;
+    color: var(--border-strong);
+  }
+
+  .nav .nav-back:not([hidden]) {
+    margin-left: -0.75rem;
+    padding-left: 0.75rem;
+    border-left: none;
+    border-radius: var(--radius-small);
+  }
+
+  .nav .nav-back > [aria-hidden="true"] {
+    display: none;
+  }
+
+  .nav .nav-secondary,
+  .list-edit {
+    color: var(--fg-muted);
+  }
+
+  .list-edit {
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-small);
+  }
+
+  .nav .nav-primary {
+    padding: 0.375rem 0.875rem;
+    color: var(--on-action);
+    background: var(--action-fill);
+  }
+
+  .nav .nav-lock {
+    position: relative;
+    margin-left: 0.75rem;
+  }
+
+  .nav .nav-lock::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -0.5rem;
+    height: 1.25rem;
+    border-left: 1px solid var(--border);
+    transform: translateY(-50%);
+  }
+
+  /* Schaltflächen: eine Form für alle Hauptaktionen (Formular, Sperrbildschirm, Dialog) */
+  .button-primary {
+    color: var(--on-action);
+    background: var(--action-fill);
+  }
+
+  /* Formular: Schritte links, Inhalt als ruhige Spalte, Aktionsleiste unten an der Spalte */
+  #transferForm {
+    display: grid;
+    grid-template-columns: 14.5rem minmax(0, 46rem);
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      "sidebar content"
+      "sidebar actions";
+    column-gap: 3.5rem;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .form-content {
+    grid-area: content;
+    padding-bottom: 2.5rem;
+  }
+
+  #transferForm h2 {
+    margin: 0;
+    padding-bottom: 1.25rem;
+    font-size: 1.75rem;
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  /* Die nummerierte Seitenleiste zeigt die Position bereits; der Zähler bleibt für Screenreader erhalten. */
+  .step-counter {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .form-actions {
+    display: flex;
+    grid-area: actions;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 0 max(1rem, env(safe-area-inset-bottom));
+    background: var(--bg);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .form-actions button {
+    min-width: 7rem;
+    min-height: 40px;
+    padding: 0.5rem 1.125rem;
+    font-size: 0.9375rem;
+    border-radius: var(--radius-small);
+  }
+
+  .form-actions .button-secondary {
+    background: none;
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+
+  /* Im ersten Schritt gibt es kein Zurück: unsichtbar statt ausgegraut. */
+  .form-actions .button-secondary:disabled {
+    visibility: hidden;
+  }
+
+  /* Schritte: nummerierte Liste ohne Kästen; der aktuelle Schritt trägt die Akzentfarbe. */
+  .form-sidebar {
+    display: flex;
+    grid-area: sidebar;
+    flex-direction: column;
+  }
+
+  .navigation {
+    position: sticky;
+    top: 6rem;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    margin: 0;
+    counter-reset: step;
+  }
+
+  .dot {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    height: auto;
+    min-height: 40px;
+    padding: 0.25rem 0;
+    font: inherit;
+    font-size: 0.9375rem;
+    color: var(--fg-muted);
+    text-align: left;
+    border-radius: var(--radius-small);
+    counter-increment: step;
+  }
+
+  .dot::before {
+    content: counter(step);
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    background: none;
+    border: 1px solid var(--border);
+  }
+
+  .dot.active {
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  .dot.active::before {
+    color: var(--on-accent);
+    background: var(--accent-fill);
+    border-color: var(--accent-fill);
+    transform: none;
+  }
+
+  .step-label {
+    display: inline;
+  }
+
+  /* Felder: Beschriftung zurückhaltend, eingegebene Werte kräftig */
+  #transferForm label {
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--fg-muted);
+  }
+
+  #transferForm .form-toggle,
+  #transferForm .checklist-item {
+    font-size: 0.9375rem;
+    color: var(--fg);
+  }
+
+  #transferForm input:not([type="checkbox"]),
+  #transferForm select,
+  #transferForm textarea {
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9375rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  /* Fokus als weicher Ring; die transparente Kontur bleibt im Kontrastmodus sichtbar. */
+  #transferForm input:focus-visible,
+  #transferForm select:focus-visible,
+  #transferForm textarea:focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 1px var(--accent), 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  .input-pair {
+    gap: 0 1.25rem;
+  }
+
+  /* Aufklappbereiche: Zeilen mit Haarlinien, Pfeil rechts */
+  .accordion {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border-subtle);
+    border-radius: 0;
+  }
+
+  :not(.accordion, h2) + .accordion {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .accordion[open] {
+    padding-bottom: 1.75rem;
+  }
+
+  .accordion > summary {
+    min-height: 3.25rem;
+    padding: 0.875rem 2rem 0.875rem 0;
+  }
+
+  .accordion > summary::before {
+    right: 0.5rem;
+    left: auto;
+    color: var(--fg-muted);
+    transform: translateY(-75%) rotate(45deg);
+  }
+
+  .accordion[open] > summary::before {
+    transform: translateY(-25%) rotate(-135deg);
+  }
+
+  /* Abhängige Angaben: unter dem Schalter eingerückt, an einer Haarlinie */
+  .toggle-card {
+    margin: 0.25rem 0 0 1.125rem;
+    padding: 0 0 0.25rem 1.5rem;
+    background: none;
+    border: none;
+    border-left: 1px solid var(--border);
+    border-radius: 0;
+  }
+
+  #transferForm .form-toggle {
+    justify-content: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .form-toggle .switch {
+    order: -1;
+    width: 36px;
+    height: 20px;
+  }
+
+  .form-toggle .switch::before {
+    width: 16px;
+    height: 16px;
+  }
+
+  .form-toggle .switch:checked::before {
+    transform: translateX(16px);
+  }
+
+  /* Checklisten: zweispaltig, eckige Kästchen wie am Desktop üblich; Freitextzeile über volle Breite */
+  .checklist {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+    background: none;
+    border: none;
+    border-radius: 0;
+  }
+
+  .checklist li + li {
+    border-top: none;
+  }
+
+  .checklist > li:has(input[type="text"]) {
+    grid-column: 1 / -1;
+  }
+
+  #transferForm .checklist-item {
+    min-height: 40px;
+    margin: 0 -0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-small);
+  }
+
+  .checklist-item input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-width: 1.5px;
+    border-radius: 0.3125rem;
+  }
+
+  .checklist-item input[type="checkbox"]::after {
+    width: 0.3125rem;
+    height: 0.5625rem;
+  }
+
+  #transferForm .checklist-check {
+    margin: 0 -0.5rem 0 -0.8125rem;
+  }
+
+  /* Liste: Zeilen mit Haarlinien statt Karten; Löschen als zurückhaltende Textaktion */
+  .list-toolbar {
+    margin-bottom: 1rem;
+    padding-left: 0.75rem;
+  }
+
+  .list-count {
+    font-size: 1.5rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+  }
+
+  .entries {
+    gap: 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .swipe-container {
+    border-bottom: 1px solid var(--border-subtle);
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .entry,
+  .entry-open {
+    border-radius: 0;
+  }
+
+  .entry-open {
+    padding: 1rem 0.75rem;
+  }
+
+  .entry-open::after {
+    content: none;
+  }
+
+  .entry-open small {
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .entry-open:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .delete-inline,
+  .entries.is-editing .entry .delete-inline {
+    color: var(--danger-fill);
+    background: none;
+  }
+
+  .empty-state {
+    margin-top: 6rem;
+  }
+
+  .lock-card {
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  }
+
+  .footer a,
+  .footer .link-button {
+    text-decoration-color: var(--border-strong);
+  }
+}
+
+/* Mauszeiger: Rückmeldung beim Überfahren */
+@media (min-width: 1024px) and (hover: hover) {
+  .nav button:not(.nav-primary):hover,
+  .list-edit:hover,
+  .form-actions .button-secondary:hover:not(:disabled),
+  #transferForm .checklist-item:hover {
+    color: var(--fg);
+    background: var(--surface-muted);
+  }
+
+  .button-primary:hover:not(:disabled),
+  .nav .nav-primary:hover {
+    background: color-mix(in srgb, var(--action-fill) 82%, var(--bg));
+  }
+
+  .dot:hover {
+    color: var(--fg);
+  }
+
+  .dot:not(.active):hover::before,
+  #transferForm input:not([type="checkbox"]):hover,
+  #transferForm select:hover,
+  #transferForm textarea:hover {
+    border-color: var(--border-strong);
+  }
+
+  .accordion > summary:hover::before {
+    color: var(--fg);
+  }
+
+  .delete-inline:hover {
+    background: color-mix(in srgb, var(--danger-fill) 10%, transparent);
+  }
+
+  .footer a:hover,
+  .footer .link-button:hover {
+    color: var(--fg);
+  }
+}

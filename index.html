@@ -23,13 +23,13 @@
   <link rel="stylesheet" href="styles/form-layout.css">
   <link rel="stylesheet" href="styles/list.css">
   <link rel="stylesheet" href="styles/lock.css">
+  <link rel="stylesheet" href="styles/desktop.css">
   <script type="module" src="main.js"></script>
 </head>
 <body>
   <div class="layout" hidden>
     <header class="nav">
       <div class="nav-leading">
-        <button type="button" id="navLock" class="nav-lock" title="App sperren"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/></svg><span class="nav-lock-label">App sperren</span></button>
         <button type="button" id="navBack" class="nav-back" hidden><span aria-hidden="true">‹</span> <span class="nav-back-label">Übersicht</span></button>
       </div>
       <div class="nav-title" id="navTitle">Interhospitaltransfer</div>
@@ -38,6 +38,8 @@
         <button type="button" id="navDownload" class="nav-secondary" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm7 1.5V9h5.5ZM8 13v2h8v-2Zm0 4v2h8v-2Z"/></svg><span>PDF</span></button>
         <button type="button" id="navSave" class="nav-primary" title="Speichern (Strg/⌘ + S)" hidden>Speichern</button>
       </div>
+      <!-- Im Quelltext zuletzt: Tab-Reihenfolge Seite vor App. Mobil per CSS links angezeigt. -->
+      <button type="button" id="navLock" class="nav-lock" title="App sperren"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 10V7a5 5 0 0 1 10 0v3h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/></svg><span class="nav-lock-label">App sperren</span></button>
     </header>
 
     <main id="app"></main>

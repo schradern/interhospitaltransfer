@@ -70,6 +70,7 @@ function createEntryItem(entry, { onOpen, onDelete }) {
   row.className = 'entry';
 
   const openButton = createButton('entry-open', '', `${title} öffnen`);
+  openButton.dataset.entryId = String(entry.id);
   openButton.append(
     createTextElement('strong', title),
     createTextElement('small', describeRoute(entry)),

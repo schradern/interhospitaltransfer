@@ -15,6 +15,8 @@ let currentForm = null;
 let templatePromise = null;
 // Beim Sperren verschlüsselt im Arbeitsspeicher abgelegtes Formular; die Seite selbst wird geleert.
 let suspendedDraft = null;
+// Eintrag, dessen Zeile nach der Rückkehr zur Liste den Fokus erhält (Tastaturbedienung).
+let returnFocusEntryId = null;
 
 export function initNavigation() {
   const app = document.getElementById('app');
@@ -114,6 +116,15 @@ async function showList(app) {
   suspendedDraft = null;
   updateHeader('list');
   await renderEntriesList(app, { onOpen: entry => openForm(app, entry) });
+  restoreRowFocus(app);
+}
+
+function restoreRowFocus(app) {
+  const entryId = returnFocusEntryId;
+  returnFocusEntryId = null;
+  if (entryId === null) return;
+  const row = [...app.querySelectorAll('.entry-open')].find(button => button.dataset.entryId === String(entryId));
+  row?.focus();
 }
 
 async function openForm(app, entry) {
@@ -127,6 +138,7 @@ async function openForm(app, entry) {
   }
   if (!isUnlocked()) return;
   history.pushState({ page: 'form' }, '');
+  returnFocusEntryId = entry?.id ?? null;
   renderForm(app, templateHtml, entry, {});
   window.scrollTo({ top: 0 });
   preloadPdfResources();
@@ -135,7 +147,11 @@ async function openForm(app, entry) {
 function renderForm(app, templateHtml, entry, { initialStep = 0, hasChanges = false }) {
   currentPage = 'form';
   updateHeader('form');
-  currentForm = initForm(app, templateHtml, entry, { onSaved: () => history.back(), initialStep, hasChanges });
+  const onSaved = entryId => {
+    returnFocusEntryId = entryId;
+    history.back();
+  };
+  currentForm = initForm(app, templateHtml, entry, { onSaved, initialStep, hasChanges });
 }
 
 function loadFormTemplate() {

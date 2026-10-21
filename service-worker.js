@@ -1,5 +1,5 @@
 // Bei jeder Veröffentlichung erhöhen, damit Nutzer die neue Version erhalten.
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `interhospitaltransfer-${CACHE_VERSION}`;
 const APP_SHELL = [
   './',
@@ -14,6 +14,7 @@ const APP_SHELL = [
   './styles/overlays.css',
   './styles/lock.css',
   './styles/steps.css',
+  './styles/desktop.css',
   './icons/icon.svg',
   './icons/icon-180.png',
   './icons/icon-192.png',

@@ -3,7 +3,6 @@
   background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  scroll-margin-top: 5rem;
 }
 
 #transferForm section {
@@ -18,6 +17,11 @@
   margin: 0 0 0.5rem;
   font-size: 1.375rem;
   font-weight: 700;
+}
+
+/* Der Schritttitel erhält den Fokus nur als Startpunkt für Tastatur und Screenreader; er ist nicht bedienbar. */
+#transferForm h2:focus {
+  outline: none;
 }
 
 #transferForm label {
