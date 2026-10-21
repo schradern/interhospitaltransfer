@@ -101,6 +101,24 @@ dialog::backdrop {
 
 .dialog-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 0.75rem;
   margin-top: 1.5rem;
+}
+
+/* Rückfrage (ersetzt window.confirm) */
+.confirm-dialog {
+  width: min(26rem, calc(100% - 2rem));
+}
+
+.confirm-message {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+}
+
+.button-primary.is-destructive {
+  color: #ffffff;
+  background: var(--danger-fill);
 }

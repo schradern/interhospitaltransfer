@@ -23,6 +23,7 @@ const APP_SHELL = [
   './libs/jspdf.umd.min.js',
   './libs/fonts/NotoSans-Regular.ttf',
   './libs/fonts/NotoSans-Bold.ttf',
+  './ressources/confirmdialog.js',
   './ressources/crypto.js',
   './ressources/db.js',
   './ressources/entryhandler.js',

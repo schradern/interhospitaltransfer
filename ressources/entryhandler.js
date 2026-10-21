@@ -1,3 +1,4 @@
+import { askConfirmation } from './confirmdialog.js';
 import { loadEntries, removeEntry } from './entrystore.js';
 import { expiryOf, lastChangeOf } from './retention.js';
 import { enableSwipeToDelete } from './swipe.js';
@@ -7,6 +8,7 @@ import { isUnlocked } from './vault.js';
 // Kurzformate ohne Jahr: bei 7 Tagen Speicherdauer eindeutig und auch auf schmalen Bildschirmen vollständig lesbar.
 const DATE_FORMAT = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 const DAY_FORMAT = new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit' });
+const DELETE_QUESTION = 'Diesen Eintrag endgültig löschen?';
 const UNREADABLE_MESSAGE = 'Dieser Eintrag kann nicht entschlüsselt werden und lässt sich nur löschen.';
 
 export async function renderEntriesList(container, { onOpen }) {
@@ -93,14 +95,20 @@ function createEntryItem(entry, { onOpen, onDelete }) {
 }
 
 async function confirmAndDelete(entry, item, container) {
-  // Ohne Patientennamen: Der Systemdialog hält Zeitgeber an und bliebe sonst bis zur Antwort sichtbar.
-  if (!window.confirm('Diesen Eintrag endgültig löschen?')) {
+  // Ohne Patientennamen: Die Rückfrage bleibt bis zur Antwort sichtbar.
+  const isConfirmed = await askConfirmation({ message: DELETE_QUESTION, confirmLabel: 'Löschen', isDestructive: true });
+  if (!isConfirmed) {
     item.querySelector('.entry')?.classList.remove('is-swiped');
     return;
   }
   try {
     await removeEntry(entry.id);
+    // Tastatur: Fokus wandert zur benachbarten Zeile statt an den Seitenanfang.
+    const neighbourRow = item.contains(document.activeElement)
+      ? (item.nextElementSibling ?? item.previousElementSibling)?.querySelector('.entry-open')
+      : null;
     item.remove();
+    neighbourRow?.focus();
     showStatus('Eintrag gelöscht.');
     const remaining = container.querySelectorAll('.swipe-container').length;
     if (remaining === 0) container.replaceChildren(createEmptyMessage());

@@ -475,9 +475,13 @@
     background: var(--surface-muted);
   }
 
-  .button-primary:hover:not(:disabled),
+  .button-primary:not(.is-destructive):hover:not(:disabled),
   .nav .nav-primary:hover {
     background: color-mix(in srgb, var(--action-fill) 82%, var(--bg));
+  }
+
+  .button-primary.is-destructive:hover {
+    background: color-mix(in srgb, var(--danger-fill) 85%, #000000);
   }
 
   .dot:hover {
